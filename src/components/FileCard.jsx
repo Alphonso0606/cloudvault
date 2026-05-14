@@ -19,6 +19,7 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
     const [tagsInput, setTagsInput] = useState((file.tags || []).join(', '))
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [copied, setCopied] = useState(false)
     const cfg = TYPE_CONFIG[file.type] || TYPE_CONFIG.other
 
     const saveTags = () => {
@@ -32,6 +33,12 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
         await onDelete()
         setDeleting(false)
         setConfirmDelete(false)
+    }
+
+    const copyLink = () => {
+        navigator.clipboard.writeText(file.url)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
     }
 
     return (
@@ -56,29 +63,37 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
                 }} />
             )}
 
-            {/* Boutons d'action (hover) */}
+            {/* Toast "Lien copié" */}
+            {copied && (
+                <div style={{
+                    position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+                    background: '#22c55e', color: '#fff', fontSize: 11, fontWeight: 600,
+                    padding: '4px 10px', borderRadius: 20, zIndex: 30, whiteSpace: 'nowrap'
+                }}>
+                    <i className="fas fa-check" style={{ marginRight: 4 }} /> Lien copié !
+                </div>
+            )}
+
+            {/* Boutons d'action */}
             <div style={{
                 position: 'absolute', top: 8, right: 8, display: 'flex', gap: 4,
                 opacity: hover ? 1 : 0, transition: 'opacity 0.15s'
             }}>
-                <button onClick={(e) => { e.stopPropagation(); onToggleFav() }} style={{
+                <button onClick={(e) => { e.stopPropagation(); onToggleFav() }} title="Favori" style={{
                     width: 26, height: 26, border: '1px solid var(--color-border)', borderRadius: 7,
                     background: 'var(--color-bg-3)', color: file.favorite ? 'var(--color-warning)' : 'var(--color-text-muted)',
                     fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                     <i className="fas fa-star" />
                 </button>
-
-                {/* Bouton supprimer direct */}
-                <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); setShowMenu(false) }} style={{
+                <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); setShowMenu(false) }} title="Supprimer" style={{
                     width: 26, height: 26, border: '1px solid rgba(248,113,113,0.3)', borderRadius: 7,
                     background: 'rgba(248,113,113,0.1)', color: '#f87171',
                     fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                     <i className="fas fa-trash" />
                 </button>
-
-                <button onClick={(e) => { e.stopPropagation(); setShowMenu(v => !v) }} style={{
+                <button onClick={(e) => { e.stopPropagation(); setShowMenu(v => !v) }} title="Plus" style={{
                     width: 26, height: 26, border: '1px solid var(--color-border)', borderRadius: 7,
                     background: 'var(--color-bg-3)', color: 'var(--color-text-muted)',
                     fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
@@ -93,12 +108,14 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
                     position: 'absolute', top: 36, right: 8,
                     background: 'var(--color-bg-3)', border: '1px solid var(--color-border)',
                     borderRadius: 'var(--radius-md)', padding: 6, zIndex: 10,
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)', minWidth: 150
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)', minWidth: 160
                 }}>
                     {[
                         { icon: 'fa-eye', label: 'Prévisualiser', action: () => { onPreview(); setShowMenu(false) } },
                         { icon: 'fa-download', label: 'Télécharger', action: () => { window.open(file.url, '_blank'); setShowMenu(false) } },
+                        { icon: 'fa-copy', label: 'Copier le lien', action: () => { copyLink(); setShowMenu(false) } },
                         { icon: 'fa-tags', label: 'Modifier tags', action: () => { setEditTags(true); setShowMenu(false) } },
+                        { icon: 'fa-folder', label: 'Changer dossier', action: () => { setShowMenu(false) } },
                         { icon: 'fa-trash', label: 'Supprimer', color: '#f87171', action: () => { setConfirmDelete(true); setShowMenu(false) } },
                     ].map(item => (
                         <button key={item.label} onClick={item.action} style={{
@@ -107,19 +124,18 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
                             background: 'transparent', color: item.color || 'var(--color-text-muted)',
                             fontSize: 12, cursor: 'pointer', textAlign: 'left'
                         }}>
-                            <i className={`fas ${item.icon}`} style={{ fontSize: 12 }} />
+                            <i className={`fas ${item.icon}`} style={{ fontSize: 12, width: 14 }} />
                             {item.label}
                         </button>
                     ))}
                 </div>
             )}
 
-            {/* Modal confirmation suppression */}
+            {/* Confirmation suppression */}
             {confirmDelete && (
                 <div onClick={e => e.stopPropagation()} style={{
                     position: 'absolute', inset: 0, zIndex: 20,
-                    background: 'rgba(15,17,23,0.95)',
-                    borderRadius: 'var(--radius-lg)',
+                    background: 'rgba(15,17,23,0.95)', borderRadius: 'var(--radius-lg)',
                     display: 'flex', flexDirection: 'column',
                     alignItems: 'center', justifyContent: 'center',
                     gap: 12, padding: 16, textAlign: 'center'
@@ -144,21 +160,21 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
                             color: 'var(--color-text-muted)', fontSize: 12, cursor: 'pointer'
                         }}>Annuler</button>
                         <button onClick={handleDelete} disabled={deleting} style={{
-                            flex: 1, padding: '7px 0', border: 'none',
-                            borderRadius: 8, background: '#f87171',
-                            color: '#fff', fontSize: 12, cursor: 'pointer', fontWeight: 600,
+                            flex: 1, padding: '7px 0', border: 'none', borderRadius: 8,
+                            background: '#f87171', color: '#fff', fontSize: 12,
+                            cursor: 'pointer', fontWeight: 600,
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4
                         }}>
                             {deleting
                                 ? <i className="fas fa-spinner" style={{ animation: 'spin 0.8s linear infinite' }} />
-                                : <><i className="fas fa-trash" /> Supprimer</>
+                                : <><i className="fas fa-trash" /> Oui</>
                             }
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* Icône fichier */}
+            {/* Icône */}
             <div onClick={onPreview} style={{
                 width: 44, height: 44, borderRadius: 12, background: cfg.bg,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -175,6 +191,17 @@ export default function FileCard({ file, index, onPreview, onDelete, onToggleFav
             }}>
                 {file.name}
             </div>
+
+            {/* Dossier badge */}
+            {file.folder && (
+                <div style={{
+                    fontSize: 10, color: 'var(--color-text-dim)', marginBottom: 4,
+                    display: 'flex', alignItems: 'center', gap: 4
+                }}>
+                    <i className="fas fa-folder" style={{ fontSize: 9, color: 'var(--color-warning)' }} />
+                    {file.folder}
+                </div>
+            )}
 
             {/* Méta */}
             <div style={{ fontSize: 11, color: 'var(--color-text-dim)', marginBottom: 8 }}>

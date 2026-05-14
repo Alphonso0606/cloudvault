@@ -83,7 +83,7 @@ export function useFiles(userId) {
     return unsub
   }, [userId])
 
-  const uploadFile = useCallback(async (file, tags = [], onProgress) => {
+  const uploadFile = useCallback(async (file, tags = [], folder = '', onProgress) => {
     const { url, publicId } = await uploadToCloudinary(file, onProgress)
     const docRef = doc(collection(db, 'files'))
     await setDoc(docRef, {
@@ -94,6 +94,7 @@ export function useFiles(userId) {
       url,
       publicId,
       tags,
+      folder: folder || '',
       favorite: false,
       createdAt: new Date(),
     })
@@ -111,5 +112,22 @@ export function useFiles(userId) {
     await setDoc(doc(db, 'files', fileDoc.id), { tags }, { merge: true })
   }, [])
 
-  return { files, loading, uploadFile, deleteFile, toggleFavorite, updateTags }
+  const updateFolder = useCallback(async (fileDoc, folder) => {
+    await setDoc(doc(db, 'files', fileDoc.id), { folder }, { merge: true })
+  }, [])
+
+  // Stats par type
+  const stats = {
+    total: files.length,
+    totalSize: files.reduce((a, f) => a + (f.size || 0), 0),
+    byType: files.reduce((acc, f) => {
+      acc[f.type] = (acc[f.type] || { count: 0, size: 0 })
+      acc[f.type].count++
+      acc[f.type].size += f.size || 0
+      return acc
+    }, {}),
+    folders: [...new Set(files.map(f => f.folder).filter(Boolean))],
+  }
+
+  return { files, loading, uploadFile, deleteFile, toggleFavorite, updateTags, updateFolder, stats }
 }
