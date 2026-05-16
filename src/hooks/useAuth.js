@@ -4,11 +4,6 @@ import { auth } from '../firebase'
 
 export function useAuth() {
   const [user, setUser] = useState(undefined)
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u))
-    return unsub
-  }, [])
-
+  useEffect(() => { const u = onAuthStateChanged(auth, setUser); return u }, [])
   return { user, loading: user === undefined }
 }

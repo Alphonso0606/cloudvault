@@ -1,92 +1,48 @@
 import { formatSize, formatDate } from '../hooks/useFiles'
 
 export default function PreviewModal({ file, onClose }) {
-  const renderPreview = () => {
-    if (file.type === 'image') return (
-      <img src={file.url} alt={file.name} style={{
-        maxWidth: '100%', maxHeight: '70vh', borderRadius: 'var(--radius-md)',
-        objectFit: 'contain', display: 'block', margin: '0 auto'
-      }} />
-    )
-    if (file.type === 'pdf') return (
-      <iframe src={file.url} style={{ width: '100%', height: '70vh', border: 'none', borderRadius: 'var(--radius-md)' }} title={file.name} />
-    )
-    if (file.type === 'video') return (
-      <video src={file.url} controls style={{ width: '100%', maxHeight: '70vh', borderRadius: 'var(--radius-md)' }} />
-    )
-    if (file.type === 'audio') return (
-      <div style={{ padding: '30px 0', textAlign: 'center' }}>
-        <i className="fas fa-music" style={{ fontSize: 60, color: 'var(--color-purple)', marginBottom: 20, display: 'block' }} />
-        <audio src={file.url} controls style={{ width: '100%' }} />
-      </div>
-    )
+    const body = () => {
+        if (file.type==='image') return <img src={file.url} alt={file.name} style={{ maxWidth:'100%', maxHeight:'65vh', borderRadius:'var(--r-md)', objectFit:'contain', display:'block', margin:'0 auto' }} />
+        if (file.type==='pdf')   return <iframe src={file.url} style={{ width:'100%', height:'65vh', border:'none', borderRadius:'var(--r-md)' }} title={file.name} />
+        if (file.type==='video') return <video src={file.url} controls style={{ width:'100%', maxHeight:'65vh', borderRadius:'var(--r-md)' }} />
+        if (file.type==='audio') return (
+            <div style={{ padding:'28px 0', textAlign:'center' }}>
+                <i className="fas fa-music" style={{ fontSize:50, color:'var(--purple)', marginBottom:16, display:'block' }} />
+                <audio src={file.url} controls style={{ width:'100%' }} />
+            </div>
+        )
+        return (
+            <div style={{ textAlign:'center', padding:'40px 0' }}>
+                <i className="fas fa-file" style={{ fontSize:52, color:'var(--text3)', display:'block', marginBottom:14 }} />
+                <p style={{ color:'var(--text2)', marginBottom:16, fontSize:13 }}>Pas de prévisualisation</p>
+                <a href={file.url} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'10px 18px', background:'var(--accent)', color:'#fff', borderRadius:'var(--r-md)', fontWeight:500, fontSize:13 }}>
+                    <i className="fas fa-download" />Télécharger
+                </a>
+            </div>
+        )
+    }
+
     return (
-      <div style={{ textAlign: 'center', padding: '50px 0' }}>
-        <i className="fas fa-file" style={{ fontSize: 64, color: 'var(--color-text-dim)', display: 'block', marginBottom: 16 }} />
-        <p style={{ color: 'var(--color-text-muted)', marginBottom: 20 }}>Pas de prévisualisation disponible</p>
-        <a href={file.url} target="_blank" rel="noopener noreferrer" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          padding: '10px 20px', background: 'var(--color-accent)',
-          color: '#0f1117', borderRadius: 'var(--radius-md)', fontWeight: 500, fontSize: 14
-        }}>
-          <i className="fas fa-download" /> Télécharger
-        </a>
-      </div>
+        <div onClick={e=>e.target===e.currentTarget&&onClose()} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.88)', display:'flex', alignItems:'flex-end', zIndex:100, backdropFilter:'blur(6px)' }}>
+            <div className="slide-up" style={{ background:'var(--bg2)', border:'1px solid var(--border)', borderRadius:'20px 20px 0 0', width:'100%', maxHeight:'92vh', display:'flex', flexDirection:'column', boxShadow:'var(--shadow)' }}>
+                <div style={{ width:32, height:4, background:'var(--border2)', borderRadius:4, margin:'10px auto 0' }} />
+                <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderBottom:'1px solid var(--border)' }}>
+                    <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:13, fontWeight:500, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{file.name}</div>
+                        <div style={{ fontSize:10, color:'var(--text3)', marginTop:1 }}>
+                            {formatSize(file.size)} · {formatDate(file.createdAt)}
+                            {(file.tags||[]).length>0 && <span style={{ marginLeft:5 }}>{file.tags.map(t=>`#${t}`).join(' ')}</span>}
+                        </div>
+                    </div>
+                    <a href={file.url} target="_blank" rel="noopener noreferrer" style={{ width:30, height:30, border:'1px solid var(--border)', borderRadius:'var(--r-sm)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--text2)', fontSize:13, flexShrink:0 }}>
+                        <i className="fas fa-download" />
+                    </a>
+                    <button onClick={onClose} style={{ width:30, height:30, border:'1px solid var(--border)', borderRadius:'var(--r-sm)', background:'none', color:'var(--text2)', fontSize:14, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                        <i className="fas fa-times" />
+                    </button>
+                </div>
+                <div style={{ flex:1, overflow:'auto', padding:14 }}>{body()}</div>
+            </div>
+        </div>
     )
-  }
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 100, padding: 20, backdropFilter: 'blur(6px)'
-    }} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="fade-in" style={{
-        background: 'var(--color-bg-2)', border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-xl)', width: '100%', maxWidth: 800,
-        maxHeight: '90vh', display: 'flex', flexDirection: 'column',
-        boxShadow: '0 30px 80px rgba(0,0,0,0.6)'
-      }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 12,
-          padding: '16px 20px', borderBottom: '1px solid var(--color-border)'
-        }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {file.name}
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--color-text-dim)', marginTop: 2 }}>
-              {formatSize(file.size)} · {formatDate(file.createdAt)}
-              {(file.tags || []).length > 0 && (
-                <span style={{ marginLeft: 8 }}>
-                  {file.tags.map(t => `#${t}`).join(' ')}
-                </span>
-              )}
-            </div>
-          </div>
-          <a href={file.url} target="_blank" rel="noopener noreferrer" title="Télécharger" style={{
-            width: 34, height: 34, border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'var(--color-text-muted)', fontSize: 14
-          }}>
-            <i className="fas fa-download" />
-          </a>
-          <button onClick={onClose} style={{
-            width: 34, height: 34, border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)', background: 'none',
-            color: 'var(--color-text-muted)', fontSize: 16, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <i className="fas fa-times" />
-          </button>
-        </div>
-
-        {/* Preview area */}
-        <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
-          {renderPreview()}
-        </div>
-      </div>
-    </div>
-  )
 }

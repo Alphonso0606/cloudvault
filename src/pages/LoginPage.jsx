@@ -7,82 +7,51 @@ import { useEffect } from 'react'
 export default function LoginPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  useEffect(() => { if (user) navigate('/') }, [user])
 
-  useEffect(() => {
-    if (user) navigate('/')
-  }, [user])
-
-  const handleGoogle = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider)
-      navigate('/')
-    } catch (e) {
-      console.error(e)
-    }
+  const login = async () => {
+    try { await signInWithPopup(auth, googleProvider); navigate('/') }
+    catch(e) { console.error(e) }
   }
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'var(--color-bg)',
-      backgroundImage: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(34,211,160,0.08) 0%, transparent 70%)'
-    }}>
-      <div className="slide-up" style={{
-        background: 'var(--color-bg-2)', border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-xl)', padding: '48px 40px', width: 360, textAlign: 'center',
-        boxShadow: 'var(--shadow-card)'
+      <div style={{
+        minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center',
+        background:'var(--bg)', padding:20,
+        backgroundImage:'radial-gradient(ellipse 60% 40% at 50% 0%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 70%)'
       }}>
-        {/* Logo */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{
-            width: 56, height: 56, background: 'var(--color-accent-dim)',
-            borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 16px', fontSize: 26, color: 'var(--color-accent)'
-          }}>
+        <div className="slide-up" style={{
+          background:'var(--bg2)', border:'1px solid var(--border)',
+          borderRadius:'var(--r-xl)', padding:'36px 28px',
+          width:'100%', maxWidth:360, textAlign:'center',
+          boxShadow:'var(--shadow)'
+        }}>
+          <div style={{ width:52, height:52, background:'var(--accent-dim)', borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 14px', fontSize:24, color:'var(--accent)' }}>
             <i className="fas fa-cloud" />
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 600, letterSpacing: '-0.5px', marginBottom: 6 }}>CloudVault</h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>Tes fichiers, partout, toujours accessibles</p>
-        </div>
+          <h1 style={{ fontSize:22, fontWeight:600, letterSpacing:'-0.5px', marginBottom:6 }}>CloudVault</h1>
+          <p style={{ color:'var(--text2)', fontSize:14, marginBottom:28 }}>Ton espace digital personnel</p>
 
-        {/* Features rapides */}
-        <div style={{ marginBottom: 32, textAlign: 'left' }}>
-          {[
-            ['fa-bolt', 'Upload rapide avec prévisualisation'],
-            ['fa-tags', 'Tags pour retrouver en 2 secondes'],
-            ['fa-star', 'Favoris et filtres intelligents'],
-          ].map(([icon, text]) => (
-            <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-              <div style={{
-                width: 28, height: 28, background: 'var(--color-accent-dim)', borderRadius: 8,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--color-accent)', fontSize: 12
-              }}>
-                <i className={`fas ${icon}`} />
+          {[['fa-bolt','Upload + OCR + analyse IA'],['fa-th-large','Moodboards style Pinterest'],['fa-palette','4 thèmes personnalisables']].map(([ic, t]) => (
+              <div key={t} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10, textAlign:'left' }}>
+                <div style={{ width:28, height:28, background:'var(--accent-dim)', borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', color:'var(--accent)', fontSize:12, flexShrink:0 }}>
+                  <i className={`fas ${ic}`} />
+                </div>
+                <span style={{ fontSize:13, color:'var(--text2)' }}>{t}</span>
               </div>
-              <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>{text}</span>
-            </div>
           ))}
+
+          <button onClick={login} style={{
+            width:'100%', padding:'13px 20px', marginTop:20,
+            background:'#fff', color:'#1a1a1a', border:'none',
+            borderRadius:'var(--r-md)', fontSize:14, fontWeight:500,
+            display:'flex', alignItems:'center', justifyContent:'center', gap:10
+          }}>
+            <img src="https://www.google.com/favicon.ico" alt="" width={16} height={16} />
+            Continuer avec Google
+          </button>
+          <p style={{ marginTop:16, fontSize:12, color:'var(--text3)' }}>Gratuit · Firebase + Cloudinary · 25 Go</p>
         </div>
-
-        <button onClick={handleGoogle} style={{
-          width: '100%', padding: '12px 20px',
-          background: '#fff', color: '#1a1a1a',
-          border: 'none', borderRadius: 'var(--radius-md)',
-          fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center',
-          justifyContent: 'center', gap: 10, transition: 'opacity 0.15s'
-        }}
-          onMouseEnter={e => e.target.style.opacity = '0.9'}
-          onMouseLeave={e => e.target.style.opacity = '1'}
-        >
-          <img src="https://www.google.com/favicon.ico" alt="" width={16} height={16} style={{ borderRadius: 2 }} />
-          Continuer avec Google
-        </button>
-
-        <p style={{ marginTop: 20, fontSize: 12, color: 'var(--color-text-dim)' }}>
-          Gratuit · Firebase Spark Plan · 5 Go inclus
-        </p>
       </div>
-    </div>
   )
 }
