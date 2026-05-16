@@ -12,6 +12,7 @@ import StatsPage from '../components/StatsPage'
 import BoardsPage from '../components/BoardsPage'
 import BottomNav from '../components/BottomNav'
 import ThemePicker from '../components/ThemePicker'
+import InstallBanner from '../components/InstallBanner'
 
 const TYPE_FILTERS = [
   { id:'all',      label:'Tous',     icon:'fa-layer-group' },
@@ -265,6 +266,7 @@ export default function DashboardPage() {
         {showUpload && <UploadModal onClose={() => setShowUpload(false)} onUpload={uploadFile} folders={stats.folders} />}
         {preview && <PreviewModal file={preview} onClose={() => setPreview(null)} />}
         {showTheme && <ThemePicker currentTheme={theme} onSelect={setTheme} onClose={() => setShowTheme(false)} />}
+        <InstallBanner />
       </div>
   )
 }
