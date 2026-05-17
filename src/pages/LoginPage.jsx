@@ -4,15 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useEffect, useState, useRef, useCallback } from 'react'
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ⚠️ IMPORTANT : Les vidéos DOIVENT être en .mp4
-// Les .mov ne fonctionnent PAS dans les navigateurs
+// ⚠️ ATTENTION : Seuls les .mp4 sont supportés par les navigateurs !
 // Convertis tes .mov en .mp4 sur cloudconvert.com
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const MEDIA = [
   {
     type: 'video',
-    url: 'https://res.cloudinary.com/dl9rvxnel/video/upload/v1779020579/cloudvault/hiu98mxp1kmaqua9w9a8.mov',
+    url: 'https://res.cloudinary.com/dl9rvxnel/video/upload/v1779042605/cloudvault/tanorshfawg17yqu5xqn.mp4',
     caption: 'Tes plus beaux moments',
     sub: 'Pour toujours ici 💜'
   },
@@ -36,7 +33,7 @@ const MEDIA = [
   },
   {
     type: 'video',
-    url: 'https://res.cloudinary.com/dl9rvxnel/video/upload/v1779022934/cloudvault/vjajwys5fuzxtei01dnz.mov',
+    url: 'https://res.cloudinary.com/dl9rvxnel/video/upload/v1779038865/cloudvault/osndfa0ghibk9rrymwxa.mp4',
     caption: 'Tes créations',
     sub: 'Infinies et uniques'
   },
@@ -390,7 +387,7 @@ export default function LoginPage() {
               <div style={{ marginTop: 24, textAlign: 'center' }}>
                 <p style={{ color: 'rgba(196,181,253,0.3)', fontSize: 11, lineHeight: 1.8 }}>
                   Espace privé · 25 Go · Stockage sécurisé<br />
-                  <span style={{ color: 'rgba(196,181,253,0.2)' }}>Fait avec 💜 rien que pour toi</span>
+                  <span style={{ color: 'rgba(196,181,253,0.2)' }}>Fait rien que pour toi</span>
                 </p>
               </div>
             </div>

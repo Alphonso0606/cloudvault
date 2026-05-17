@@ -13,6 +13,7 @@ import BoardsPage from '../components/BoardsPage'
 import BottomNav from '../components/BottomNav'
 import ThemePicker from '../components/ThemePicker'
 import InstallBanner from '../components/InstallBanner'
+import CameraPage from '../components/CameraPage'
 
 const TYPE_FILTERS = [
   { id:'all',      label:'Tous',     icon:'fa-layer-group' },
@@ -260,6 +261,7 @@ export default function DashboardPage() {
         }}>
           <i className="fas fa-plus" />
         </button>
+        {page === 'camera' && <CameraPage onClose={() => setPage('files')} />}
 
         <BottomNav page={page} onChangePage={setPage} />
 
